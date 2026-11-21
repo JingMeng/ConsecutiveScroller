@@ -3,10 +3,15 @@ apply plugin: 'com.android.library'
 group='com.github.donkingliang' // 指定group，com.github.<用户名>
 
 android {
-    compileSdkVersion 30
+    namespace 'com.donkingliang.consecutivescroller'
+    compileSdkVersion 34
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 30
+        targetSdkVersion 34
         versionCode 1
         versionName "1.0"
 
@@ -40,14 +45,16 @@ tasks.withType(JavaCompile) {
 // 打包源码
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
+    archiveClassifier.set('sources')
 }
 
 task javadoc(type: Javadoc) {
     failOnError  false
     source = android.sourceSets.main.java.sourceFiles
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    classpath += configurations.compile
+    doFirst {
+        classpath += configurations.getByName('debugCompileClasspath')
+    }
 }
 
 artifacts {
